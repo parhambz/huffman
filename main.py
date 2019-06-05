@@ -34,37 +34,53 @@ class Node:
         self.count+=n.count
         return
     def __str__(self):
-        return self.val + str(self.count)
+        return str(self.count)
+    def __ge__(self,other):
+        return self.count >= other.count
+    def __gt__(self,other):
+        return self.count > other.count
+    def __lt__(self,other):
+        return self.count < other.count
+    def __le__(self,other):
+        return self.count <= other.count
 class MinHeap:
-    arr=[]
+    arr=[Node("aa")]
     def upHeapify(self,x):
         if x<=1:
             return
-        if self.arr[x/2].count>=self.arr[x].count:
-            self.arr[x/2].count,self.arr[x].count=self.arr[x].count,self.arr[x/2].count
-            return self.upHeapify(x/2)
+        if self.arr[x//2]>=self.arr[x]:
+            self.arr[x//2],self.arr[x]=self.arr[x],self.arr[x//2]
+            return self.upHeapify(x//2)
         else:
             return
     def downHeapify(self,x):
         if (x*2>=len(self.arr)):
             return
-        if (x*2+1>=len(self.arr) or self.arr[x*2].count<= self.arr[x*2+1].count):
-            if (self.arr[x].count>=self.arr[x*2].count):
-                self.arr[x].count,self.arr[x*2]=self.arr[x*2].count,self.arr[x]
+        if (x*2+1>=len(self.arr) or self.arr[x*2]<= self.arr[x*2+1]):
+            if (self.arr[x]>=self.arr[x*2]):
+                self.arr[x],self.arr[x*2]=self.arr[x*2],self.arr[x]
                 return self.downHeapify(x*2)
         else:
-            if (self.arr[x].count>=self.arr[x*2+1].count):
-                self.arr[x].count,self.arr[x*2+1]=self.arr[x*2+1].count,self.arr[x]
+            if (self.arr[x]>=self.arr[x*2+1]):
+                self.arr[x],self.arr[x*2+1]=self.arr[x*2+1],self.arr[x]
                 return self.downHeapify(x*2+1)
         return
     def add(self,x):
-        self.arr[len(self.arr)]
+        self.arr.append(x)
         self.upHeapify(len(self.arr)-1)
     def removeMin(self):
         self.arr[1]=self.arr[len(self.arr)-1]
+        self.arr.pop()
         self.downHeapify(1)
     def getMin(self):
         return self.arr[1]
+    def __str__(self):
+        res=''
+        j=0
+        for i in self.arr:
+            res=res+str(j)+str(i)+'\n'
+            j=j+1
+        return res
 def findNode(n,val):
     if (len(n.val)==1):
         return n.address
@@ -98,6 +114,12 @@ def createTree(alphabet):
         alphabet = [temp] + alphabet[2:]
     return alphabet[0]
 
+def createMinHeap(alphabet):
+    m=MinHeap()
+    for i in alphabet :
+        m.add(i)
+    return m
+
 def writeFile(res,huffmanTxtStr):
     bstr = [res[i:i + 8] for i in range(0, len(res), 8)]
     bs = [int(b, 2) for b in bstr]
@@ -118,6 +140,10 @@ fileName=input('enter file name :')
 source=open(fileName,'r')
 fileStr=source.read()
 alphabet=countChar(fileStr)
+
+minHeapTree=createMinHeap(alphabet)
+print(minHeapTree)
+
 tree=createTree(alphabet)
 res=''
 for i in range(0,len(fileStr)):
