@@ -35,7 +35,36 @@ class Node:
         return
     def __str__(self):
         return self.val + str(self.count)
-
+class MinHeap:
+    arr=[]
+    def upHeapify(self,x):
+        if x<=1:
+            return
+        if self.arr[x/2].count>=self.arr[x].count:
+            self.arr[x/2].count,self.arr[x].count=self.arr[x].count,self.arr[x/2].count
+            return self.upHeapify(x/2)
+        else:
+            return
+    def downHeapify(self,x):
+        if (x*2>=len(self.arr)):
+            return
+        if (x*2+1>=len(self.arr) or self.arr[x*2].count<= self.arr[x*2+1].count):
+            if (self.arr[x].count>=self.arr[x*2].count):
+                self.arr[x].count,self.arr[x*2]=self.arr[x*2].count,self.arr[x]
+                return self.downHeapify(x*2)
+        else:
+            if (self.arr[x].count>=self.arr[x*2+1].count):
+                self.arr[x].count,self.arr[x*2+1]=self.arr[x*2+1].count,self.arr[x]
+                return self.downHeapify(x*2+1)
+        return
+    def add(self,x):
+        self.arr[len(self.arr)]
+        self.upHeapify(len(self.arr)-1)
+    def removeMin(self):
+        self.arr[1]=self.arr[len(self.arr)-1]
+        self.downHeapify(1)
+    def getMin(self):
+        return self.arr[1]
 def findNode(n,val):
     if (len(n.val)==1):
         return n.address
@@ -69,13 +98,22 @@ def createTree(alphabet):
         alphabet = [temp] + alphabet[2:]
     return alphabet[0]
 
-def writeFile(res):
-    res
+def writeFile(res,huffmanTxtStr):
     bstr = [res[i:i + 8] for i in range(0, len(res), 8)]
     bs = [int(b, 2) for b in bstr]
-    with open('res.bin', 'wb') as f:
+    with open('zip.txt', 'wb') as f:
         f.write(bytearray(bs))  # convert to bytearray before writing
     f.close()
+    with open('Huffman.txt','w') as f:
+        f.write(huffmanTxtStr)
+    f.close()
+def huffmanTxt(huffTree):
+    res=''
+    for i in range(0,127):
+        temp=findNode(huffTree,chr(i))
+        res=res+'\n'+chr(i)+'   '+str(len(temp))+'  '+str(temp)
+    return res
+
 fileName=input('enter file name :')
 source=open(fileName,'r')
 fileStr=source.read()
@@ -84,7 +122,8 @@ tree=createTree(alphabet)
 res=''
 for i in range(0,len(fileStr)):
     res+=findNode(tree,fileStr[i])
-writeFile(res)
+huffmanTxtStr=huffmanTxt(tree)
+writeFile(res,huffmanTxtStr)
 print("old size is (bits) : "+str(len(fileStr)*8))
 print("new size is (bits) : "+str(len(res)))
 
