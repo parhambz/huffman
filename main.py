@@ -153,13 +153,17 @@ def huffmanTxt(huffTree,fileStr):
 fileName=input('enter file name :')
 source=open(fileName,'r')
 fileStr=source.read()
-fileStr=fileStr+chr(0)
+EOFFr=input('EOF frequency set 0 ?(y/n) ')
+if (EOFFr=='n'):
+    fileStr=fileStr+chr(0)
 alphabet=countChar(fileStr)
 
 minHeapTree=createMinHeap(alphabet)
 tree=createHuffman(minHeapTree)
 res=''
 resSize=0
+if (EOFFr=='y'):
+    fileStr=fileStr+chr(0)
 for i in range(0,len(fileStr)):
     temp=findNode(tree,fileStr[i])
     resSize+=len(temp)
@@ -167,6 +171,6 @@ for i in range(0,len(fileStr)):
 res=res+(8-len(res)%8)*'0'
 huffmanTxtStr=huffmanTxt(tree,fileStr)
 writeFile(res,huffmanTxtStr)
-print("old size is (bits) : "+str(len(fileStr)*8))
+print("old size is (bits) : "+str(len(fileStr)*8-8))
 print("new size is (bits) : "+str(resSize))
 

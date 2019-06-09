@@ -65,7 +65,7 @@ for i in range (0,len(huffmanArr)):
     if  huffmanArr[i]==chr(0):
         EOF=huffmanArr[i+2]
         break
-
+print("EOF is :",EOF)
 while(not ziptxt.startswith(EOF)):
     for i in range (0,len(huffmanArr)):
         temp=huffmanArr[i]
