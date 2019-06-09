@@ -55,6 +55,10 @@ ziptxt=readZip()
 htxt=readHufmmanTxt()
 huffmanArr=spl(htxt)
 
+def writeRes(strRes):
+    with open('input.txt','w') as f:
+        f.write(strRes)
+    f.close()
 res=''
 
 for i in range (0,len(huffmanArr)):
@@ -73,3 +77,4 @@ while(not ziptxt.startswith(EOF)):
             ziptxt=ziptxt[len(temp):]
             break
 print(res)
+writeRes(res)
