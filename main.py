@@ -1,4 +1,3 @@
-from array import *
 class Node:
     left = 0
     right = 0
@@ -88,16 +87,6 @@ def findNode(n,val):
         return findNode(n.right,val)
     if (val in n.left.val):
         return findNode(n.left, val)
-def sort(xs):
-    if(len(xs)==0):
-        return []
-    min=0
-    for i in range (0,len(xs)):
-        if(xs[i].count<xs[min].count):
-            min=i
-    minMember=xs[min]
-    xs=xs[0:min]+xs[min+1:]
-    return [minMember] + sort(xs)
 
 def countChar(fileStr):
     alphabet=[Node(chr(i)) for i in range(0,127)]
@@ -105,14 +94,6 @@ def countChar(fileStr):
         alphabet[ord(fileStr[i])-0].count += 1
     return alphabet
 
-def createTree(alphabet):
-    while (len(alphabet) != 1):
-        alphabet = sort(alphabet)
-        temp = Node('')
-        temp.addLeft(alphabet[0])
-        temp.addRight(alphabet[1])
-        alphabet = [temp] + alphabet[2:]
-    return alphabet[0]
 def createHuffman(minHeap):
     while (len(minHeap.arr)!=2):
         temp = Node('')
@@ -123,10 +104,11 @@ def createHuffman(minHeap):
             minHeap.removeMin()
         minHeap.add(temp)
     return minHeap.arr[1]
-def createMinHeap(alphabet):
+def createMinHeap(alphabet,fileStr):
     m=MinHeap()
     for i in alphabet :
-        m.add(i)
+        if i.val in fileStr:
+            m.add(i)
     return m
 
 def writeFile(res,huffmanTxtStr):
@@ -138,16 +120,19 @@ def writeFile(res,huffmanTxtStr):
     with open('Huffman.txt','w') as f:
         f.write(huffmanTxtStr)
     f.close()
-def huffmanTxt(huffTree,fileStr):
+def huffmanTxt(huffTree,fileStr,alphabet):
     res=''
-    for i in range(0,127):
-        if (chr(i) in fileStr):
-            if(chr(i)=="\t"):
-                temp=findNode(huffTree,chr(i))
-                res=res+'\\t'+'\t'+str(len(temp))+'\t'+str(temp)+'\t'+'\n'
+    for i in alphabet:
+        if i.val in fileStr:
+            if(i.val=="\t"):
+                temp=findNode(huffTree,i.val)
+                res=res+'\\t'+'\t'+str(len(temp))+'\t'+str(temp)+'\n'
+            elif(i.val=="\n"):
+                temp=findNode(huffTree,i.val)
+                res=res+'\\n'+'\t'+str(len(temp))+'\t'+str(temp)+'\n'
             else:
-                temp=findNode(huffTree,chr(i))
-                res=res+chr(i)+'\t'+str(len(temp))+'\t'+str(temp)+'\t'+'\n'
+                temp=findNode(huffTree,i.val)
+                res=res+i.val+'\t'+str(len(temp))+'\t'+str(temp)+'\n'
     return res
 
 fileName=input('enter file name :')
@@ -157,20 +142,18 @@ EOFFr=input('EOF frequency set 0 ?(y/n) ')
 if (EOFFr=='n'):
     fileStr=fileStr+chr(0)
 alphabet=countChar(fileStr)
-
-minHeapTree=createMinHeap(alphabet)
+if (EOFFr=='y'):
+    fileStr=fileStr+chr(0)
+minHeapTree=createMinHeap(alphabet,fileStr)
 tree=createHuffman(minHeapTree)
 res=''
 resSize=0
-if (EOFFr=='y'):
-    fileStr=fileStr+chr(0)
-for i in range(0,len(fileStr)):
-    temp=findNode(tree,fileStr[i])
+for i in fileStr:
+    temp=findNode(tree,i)
     resSize+=len(temp)
     res+=temp
 res=res+(8-len(res)%8)*'0'
-huffmanTxtStr=huffmanTxt(tree,fileStr)
+huffmanTxtStr=huffmanTxt(tree,fileStr,alphabet)
 writeFile(res,huffmanTxtStr)
 print("old size is (bits) : "+str(len(fileStr)*8-8))
 print("new size is (bits) : "+str(resSize))
-

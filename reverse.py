@@ -50,11 +50,13 @@ def txtToArr(txt):
     return res
 def spl(txt):
     arr=txt.split("\t")
-    return arr
+    res=[]
+    for i in arr:
+        res+=i.split('\n')
+    return res
 ziptxt=readZip()
 htxt=readHufmmanTxt()
 huffmanArr=spl(htxt)
-
 def writeRes(strRes):
     with open('input.txt','w') as f:
         f.write(strRes)
@@ -62,7 +64,7 @@ def writeRes(strRes):
 res=''
 
 for i in range (0,len(huffmanArr)):
-    if  huffmanArr[i]==chr(0):
+    if  chr(0) in huffmanArr[i]:
         EOF=huffmanArr[i+2]
         break
 print("EOF is :",EOF)
@@ -70,10 +72,12 @@ while(not ziptxt.startswith(EOF)):
     for i in range (0,len(huffmanArr)):
         temp=huffmanArr[i]
         if (ziptxt.startswith(temp)):
-            if (huffmanArr[i-2]=="\n\\t"):
+            if (huffmanArr[i-2]=="\\t"):
                 res+='\t'
+            elif(huffmanArr[i-2]=="\\n"):
+                res+='\n'
             else:
-                res+=huffmanArr[i-2][1]
+                res+=huffmanArr[i-2]
             ziptxt=ziptxt[len(temp):]
             break
 print(res)
